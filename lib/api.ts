@@ -1,5 +1,6 @@
 // lib/api.ts
 
+// Tipos de datos para KPIs
 export type KPIRow = {
   placa: string;
   periodo: string;
@@ -14,9 +15,10 @@ export type KPIRow = {
 export type KPIResponse = {
   ok: boolean;
   rows: KPIRow[];
-  resumen: any; // Puedes tiparlo mejor si conoces la estructura
+  resumen: any; // Puedes definir mejor si conoces la estructura
 };
 
+// Tipos de datos para alertas y vehículos
 export type AlertsResponse = {
   ok: boolean;
   alerts: string[];
@@ -27,6 +29,7 @@ export type VehiclesResponse = {
   vehicles: string[];
 };
 
+// Tipos de argumentos
 export type KPIArgs = {
   desde: string;
   hasta: string;
@@ -50,7 +53,7 @@ const BASE = "https://script.google.com/macros/s/AKfycbw799D0QkkG_oDaq3UmNW1zQp3
 const TOKEN = "demo";
 const TENANT = "demo";
 
-// Función para KPIs
+// Función para obtener KPIs
 export async function fetchKPI(args: KPIArgs): Promise<KPIResponse> {
   const { desde, hasta, placa = '', tipo = '', tenant = TENANT } = args;
 
@@ -69,7 +72,7 @@ export async function fetchKPI(args: KPIArgs): Promise<KPIResponse> {
   return res.json();
 }
 
-// Función para alertas
+// Función para obtener alertas
 export async function fetchAlerts(args: AlertsArgs): Promise<AlertsResponse> {
   const { desde, hasta, tenant = TENANT } = args;
 
@@ -81,4 +84,24 @@ export async function fetchAlerts(args: AlertsArgs): Promise<AlertsResponse> {
     token: TOKEN,
   });
 
-  const res = await
+  const res = await fetch(`${BASE}?${params.toString()}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('API Alerts error');
+  return res.json();
+}
+
+// Función para obtener vehículos
+export async function fetchVehicles(args: VehiclesArg = {}): Promise<VehiclesResponse> {
+  const { tenant = TENANT } = args;
+
+  const params = new URLSearchParams({
+    path: 'vehicles',
+    tenant,
+    token: TOKEN,
+  });
+
+  const res = await fetch(`${BASE}?${params.toString()}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('API Vehicles error');
+  return res.json();
+}
+
+
