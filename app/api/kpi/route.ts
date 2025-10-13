@@ -1,5 +1,8 @@
+// app/api/kpi/route.ts
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+export const fetchCache = 'force-no-store';
+export const runtime = 'nodejs';
 
 export async function GET(req: Request) {
   const BASE  = "https://script.google.com/macros/s/AKfycbw799D0QkkG_oDaq3UmNW1zQp3mK-GuS9FGe39eehENEnQt97ZgZGAm2FLp9iuK9bWVwA/exec";
@@ -12,28 +15,17 @@ export async function GET(req: Request) {
   const tipo   = searchParams.get('tipo')   || '';
   const tenant = searchParams.get('tenant') || 'demo';
 
-  const params = new URLSearchParams({ path: 'kpi', desde, hasta, placa, tipo, tenant });
-  if (TOKEN) params.set('token', TOKEN);
+  const p = new URLSearchParams({ path: 'kpi', desde, hasta, placa, tipo, tenant });
+  if (TOKEN) p.set('token', TOKEN);
 
-  const upstream = await fetch(`${BASE}?${params.toString()}`, {
+  const upstream = await fetch(`${BASE}?${p.toString()}`, {
     cache: 'no-store',
     headers: { 'Accept': 'application/json' }
   });
 
-  const text = await upstream.text();
+  // Reenviamos tal cual (sin JSON.parse) para ver el cuerpo real aunque sea HTML
+  const ct   = upstream.headers.get('content-type') ?? 'application/json; charset=utf-8';
+  const body = await upstream.arrayBuffer();
 
-  if (!upstream.ok) {
-    return new Response(text, { status: upstream.status });
-  }
-  try {
-    const data = JSON.parse(text);
-    return Response.json(data, { status: upstream.status });
-  } catch {
-    return Response.json(
-      { ok: false, error: 'UPSTREAM_NOT_JSON', preview: text.slice(0, 200) },
-      { status: 502 }
-    );
-  }
+  return new Response(body, { status: upstream.status, headers: { 'content-type': ct } });
 }
-
-
