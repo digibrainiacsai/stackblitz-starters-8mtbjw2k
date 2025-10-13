@@ -1,3 +1,3 @@
-import { fetchKPI } from '../lib/api';
+import DashboardClient from '../components/DashboardClient';
 export default function Page() { return <DashboardClient />; }
 
