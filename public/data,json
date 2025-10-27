@@ -1,1 +1,8 @@
+{
+  "rows": [
+    { "placa": "EG4120", "periodo": "2025-01", "kms": 1200, "costo_combustible": 350, "costo_mantenimiento": 100, "costo_otros": 50 },
+    { "placa": "EG4120", "periodo": "2025-02", "kms": 980,  "costo_combustible": 300, "costo_mantenimiento":  60, "costo_otros": 40 },
+    { "placa": "BC7571", "periodo": "2025-01", "kms": 800,  "costo_combustible": 220, "costo_mantenimiento":  80, "costo_otros": 30 }
+  ]
+}
 
